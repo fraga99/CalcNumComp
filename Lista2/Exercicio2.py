@@ -3,44 +3,60 @@ import math
 e = math.e
 sin = math.sin
 log = math.log10
+cos = math.cos
 
 def f(x):
-   return x**3-9*x+5 
+    return e**-x**2 - cos(x)  ## comparação 1
+    #return x**3 - x - 1  ## comparação 2
+    #return 4*sin(x) - e**x  ## comparação 3
+    #return x*log(x) - 1  ## comparação 4 
 
 def falsa_posicao(f, a, b, TOL, N):
-    if f(a) * f(b) >= 0:
+    if f(a) * f(b) > 0:
         raise ValueError("A função deve ter sinais opostos nos pontos a e b.")
     
-    print(f"{'Iteração':<10}{'a':<10}{'b':<10}{'x':<10}{'f(x)':<10}{'Erro':<10}\n")
-
-    for i in range(1, N + 1):
+    print(f"{'Iteração':<10}{'a':<10}{'b':<10}{'x':<10}{'f(x)':<10}{'Erro':<10}")
+    print(f"-" * 60)
+    
+    i = 0
+    while i < N:
         # Ponto de interseção da reta com o eixo x
-        x = (a * f(b) - b * f(a)) / (f(b) - f(a))
+        x = ((a * f(b) - b * f(a)) / (f(b) - f(a)))
         fx = f(x)
-        erro = abs(fx)
+        M = f(a)
+        erro = abs(b-a)
 
         # Imprime os dados da iteração
-        print(f"{i:<10}{a:<10.6f}{b:<10.6f}{x:<10.6f}{fx:<10.6f}{erro:<10.6f}")
-
-        # Verifica se a solução foi encontrada dentro da tolerância
-        if erro < TOL:
-            print(f"\nConvergiu após {i+1} iterações.")
-            print(f"Intervalo final: [{+a:.6f}, {b:.6f}]")
-            print(f"x = {x:.6f}")
-            print(f"f(x) = {fx:.6f}")
-            return x
-
+        print(f"{i:<10}{a:<10.6f}{b:<10.6f}{x:<10.6f}{fx:<10.6f}{erro:6f}")        
+        
         # Atualiza os limites do intervalo
-        if f(a) * fx < 0:
+        if (b-a) < TOL:
+            if abs(f(a)) < TOL:
+                a = x
+            if abs(f(b)) < TOL:
+                b = x
+        
+        
+        
+        if abs(fx) < TOL or erro < TOL:
+            print(f"\nNumero de iterações: {i + 1}")
+            print(f"Intervalo final: [{a}, {b}]")
+            print(f"x = {x}")
+            print(f"f(x) = {fx}")
+            print(f"Erro em x = {erro}")
+            return x
+        
+        if M*f(x) < 0:
             b = x
         else:
             a = x
-
+            
+        i = i + 1
     raise RuntimeError("Número máximo de iterações alcançado sem convergência.")
 
-N = 20
-a = 0
-b = 1
-TOL = 0.0005
+N = 30
+a = 1
+b = 2
+TOL = 0.0001
 
 falsa_posicao(f, a, b, TOL, N)
